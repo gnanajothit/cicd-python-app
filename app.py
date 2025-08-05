@@ -1,53 +1,10 @@
-name: CI/CD Pipeline - Build, Test, Push, Deploy
+from flask import Flask
 
-on:
-  push:
-    branches: [ "main" ]
+app = Flask(__name__)
 
-jobs:
-  build-test-push-deploy:
-    runs-on: ubuntu-latest
+@app.route('/')
+def home():
+    return "🚀 Hello from Jenkins CI/CD Pipeline with Docker and Flask!"
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          # pip install -r requirements.txt
-          python -m pip install --upgrade pip
-
-      - name: Run unit tests
-        run: |
-          pytest test_app.py
-
-
-      - name: Docker Hub Login
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/-python-cicd-app:latest .
-
-      - name: Push to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/-python-cicd-app:latest
-
-      - name: Deploy to Remote Server via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/-python-cicd-app:latest
-            docker rm -f flask-app || true
-            docker run -d --name flask-app -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/-python-cicd-app:latest
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
