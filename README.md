@@ -8,7 +8,6 @@ This project demonstrates a simple CI/CD pipeline using:
 
 ## 📁 Project Structure
 
-```
 .
 ├── Dockerfile          # Docker image definition
 ├── app.py              # Flask app
@@ -17,7 +16,6 @@ This project demonstrates a simple CI/CD pipeline using:
 ├── .github
 │   └── workflows
 │       └── main.yml    # CI/CD workflow
-```
 
 ## ✅ Features
 
